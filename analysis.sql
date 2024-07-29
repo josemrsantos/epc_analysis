@@ -101,7 +101,7 @@ WHERE c.CURRENT_ENERGY_RATING in ('F', 'G')
   AND c.POTENTIAL_ENERGY_RATING in ('A', 'B', 'C', 'D', 'E')
   AND c.tenure_agg = 'rental (private)'
 ;
--- Getting all privately rented homes to at least the E rating would cost in total between £751,483,481 and $1,455,312,401
+-- Getting all privately rented homes to at least the E rating would cost in total between £751,483,481 and £1,455,312,401
 
 
 -----------------------------------------
