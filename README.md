@@ -46,14 +46,6 @@ data mostly seems to be due to human error, as the data is entered by humans, bu
 the system that collects the data. The missing data could be due to the same reasons, but it could also be due to the
 fact that some buildings are not required to have an EPC.
 ### Interesting findings
-All the initial analysis was done in SQL, using DuckDB and DBeaver. I found that :
- - In later Years (since 2009), the highest EPC ratings seem to be A (the lowest is still G though)
- - Since 2009 the most common EPC Ratting is still B (although there is no significant amount of data for the years 
-   before 2009)
- - On average, the maximum that a home should need to improve (from F to A), would be £3,609, but there is a 
-"spend cap" in place of £3,500 for landlords that wish to rent a property, that has an EPC ratting bellow 
-the minimum allowed by law (Rating E)
- - A significant amount of homes are not only being rented legally, but also don't seem to have a recommendation to 
-improve to the  minimum required by law (EPC rating E)
-**All these findings are from observation only and might not take into account data quality issues or exceptions
-that some homes might have (to be rented with an EPC rating bellow E)**
+All the initial analysis was done in SQL, using DuckDB and DBeaver.  
+  
+I am preparing a blog post with all the findings that I found "interesting" (TBD), but they are really all in the analysis.sql file of this repo.
