@@ -77,12 +77,12 @@ FROM last_certificates ;
 -- < 1 minute
 
 -- Remove some strange entries on the total_floor_size
--- I did a few spot checks and values < 6.5 or > 500 did not make sense, yet we havd 
+-- I did a few spot checks and values < 6.5 or > 500 did not make sense (assuming these are sq m) 
+-- , yet we have 33491, before setting these records with TOTAL_FLOOR_AREA=NULL
 --SELECT count(*)
 --FROM certificates
 --WHERE TOTAL_FLOOR_AREA > 500 OR TOTAL_FLOOR_AREA < 6.5
 --;
----- 33491, before setting these records with TOTAL_FLOOR_AREA=NULL
 UPDATE certificates 
 SET TOTAL_FLOOR_AREA = NULL 
 WHERE TOTAL_FLOOR_AREA < 6.5 OR TOTAL_FLOOR_AREA > 500;
@@ -104,8 +104,6 @@ WHERE exact_construction_year > 2024;
 UPDATE certificates
 SET exact_construction_year = NULL
 WHERE exact_construction_year > 2024;
-
-
 
 
 ----------------------------------------------------------------------------
