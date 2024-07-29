@@ -2,13 +2,15 @@
 -- New built vs old built EPC rating
 -----------------------------------------
 
--- Highest and lowest evergy rating, by construction Year
+-- Highest and lowest evergy rating, by construction Year (with over 1000 properties built that Year)
 SELECT EXACT_CONSTRUCTION_YEAR::varchar
      , min(CURRENT_ENERGY_RATING) AS highest_energy_rating
      , max(CURRENT_ENERGY_RATING) AS lowest_energy_rating
      , count(*)
 FROM certificates
 GROUP BY 1
+HAVING COUNT(*) > 1000
+  AND max(CURRENT_ENERGY_RATING) <> 'INVALID!'
 ORDER BY 1 DESC NULLS LAST;
 -- In later Years (since 2009), the highest EPC ratings seem to be A (the lowest is still G though)
 -- "CAST(EXACT_CONSTRUCTION_YEAR AS VARCHAR)","highest_energy_rating","lowest_energy_rating","count_star()"
@@ -23,218 +25,162 @@ ORDER BY 1 DESC NULLS LAST;
 -- "2016",A,F,7047
 -- "2015",A,E,1438
 -- "2014",A,E,3213
--- "2013",A,E,847
--- "2012",A,D,310
--- "2011",A,F,110
--- "2010",A,F,364
--- "2009",A,D,83
--- "2008",B,D,33
--- "2007",A,E,29
--- "2006",B,E,22
--- "2005",A,E,58
--- "2004",C,F,9
--- "2003",B,C,7
--- "2002",B,D,14
--- "2001",C,C,1
--- "2000",C,D,13
--- "1998",C,C,4
--- "1996",C,D,17
--- "1995",C,E,10
--- "1993",C,C,1
--- "1992",C,D,3
--- "1990",C,D,4
--- "1987",C,D,3
--- "1985",B,D,17
--- "1983",C,C,9
--- "1981",C,D,4
--- "1980",C,E,6
--- "1975",A,E,26
--- "1972",B,B,1
--- "1970",B,E,38
--- "1969",C,C,1
--- "1967",C,D,3
--- "1965",B,G,45
--- "1963",E,G,49
--- "1960",B,E,11
--- "1957",F,G,2
--- "1956",C,C,7
--- "1954",C,C,1
--- "1952",D,D,1
--- "1950",A,E,27
--- "1947",C,D,4
--- "1945",B,B,1
--- "1940",C,E,26
--- "1938",B,C,4
--- "1935",C,C,6
--- "1930",B,E,94
--- "1929",B,D,65
--- "1927",E,E,1
--- "1925",C,C,3
--- "1920",B,E,43
--- "1915",D,D,1
--- "1910",B,D,11
--- "1907",B,C,5
--- "1904",B,D,26
--- "1903",C,C,1
--- "1902",C,C,1
--- "1900",A,F,391
--- "1891",B,B,1
--- "1890",A,D,18
--- "1889",C,D,2
--- "1888",C,C,1
--- "1885",B,B,1
--- "1881",D,D,1
--- "1880",B,E,11
--- "1876",E,E,1
--- "1870",C,C,2
--- "1867",E,E,1
--- "1851",C,C,3
--- "1850",B,E,7
--- "1849",B,C,7
--- "1836",C,C,1
--- "1830",E,E,1
--- "1825",E,E,1
--- "1820",D,D,2
--- "1805",C,D,2
--- "1800",B,F,23
--- "1783",C,C,1
--- "1750",E,E,1
--- "1700",C,C,3
--- "1600",C,C,1
--- NULL,A,INVALID!,17730355
 
 
-
--- Year, current_energy_rating
-WITH by_year AS 
-(
-SELECT EXACT_CONSTRUCTION_YEAR
-     , count(*) AS total
+-- lowest, average and highest evergy efficiency, by construction Year (with over 1000 properties built that Year)
+SELECT EXACT_CONSTRUCTION_YEAR::varchar
+     , min(CURRENT_ENERGY_EFFICIENCY) AS lowest_energy_efficiency
+     , avg(CURRENT_ENERGY_EFFICIENCY)::BIGINT AS average_energy_efficiency
+     , max(CURRENT_ENERGY_EFFICIENCY) AS highest_energy_efficiency
 FROM certificates
 GROUP BY 1
-)
-SELECT '-- ' AS com
-     , certificates.EXACT_CONSTRUCTION_YEAR::varchar
-     , CURRENT_ENERGY_RATING
-     , ((count(*) * 100) / by_year.total)::INT AS percentage
-FROM certificates
-INNER JOIN by_year ON by_year.EXACT_CONSTRUCTION_YEAR = certificates.EXACT_CONSTRUCTION_YEAR
-GROUP BY 1, 2, 3, by_year.total
-HAVING ((count(*) * 100) / by_year.total)::INT > 50
-ORDER BY 2 DESC, 3 ASC NULLS LAST;
--- Running this query clearly shows that since 2009 the most common EPC Ratting is still B
---- 2024	B	71
--- 	2023	B	75
--- 	2022	B	81
--- 	2021	B	83
--- 	2020	B	87
--- 	2019	B	89
--- 	2018	B	92
--- 	2017	B	91
--- 	2016	B	93
--- 	2015	B	88
--- 	2014	B	94
--- 	2013	B	91
--- 	2012	B	77
--- 	2011	B	57
--- 	2010	B	89
--- 	2009	C	64
--- 	2008	C	79
--- 	2007	C	69
--- 	2004	D	56
--- 	2003	B	71
--- 	2002	B	71
--- 	2001	C	100
--- 	2000	C	69
--- 	1998	C	100
--- 	1996	D	88
--- 	1995	C	80
--- 	1993	C	100
--- 	1992	C	67
--- 	1987	C	67
--- 	1985	B	94
--- 	1983	C	100
--- 	1981	C	75
--- 	1980	C	67
--- 	1975	A	85
--- 	1972	B	100
--- 	1970	C	68
--- 	1969	C	100
--- 	1967	D	67
--- 	1963	E	69
--- 	1956	C	100
--- 	1954	C	100
--- 	1952	D	100
--- 	1950	C	52
--- 	1947	C	75
--- 	1945	B	100
--- 	1940	C	88
--- 	1935	C	100
--- 	1930	C	69
--- 	1929	B	54
--- 	1927	E	100
--- 	1925	C	100
--- 	1915	D	100
--- 	1910	C	64
--- 	1907	C	80
--- 	1903	C	100
--- 	1902	C	100
+HAVING COUNT(*) > 1000
+  AND max(CURRENT_ENERGY_RATING) <> 'INVALID!'
+ORDER BY 1 DESC NULLS LAST;
+-- Despite a few outliners (on the max and min), the average energy efficiency for new properties, seem to be on the 83/84 mark.
+-- "CAST(EXACT_CONSTRUCTION_YEAR AS VARCHAR)","lowest_energy_efficiency","average_energy_efficiency","highest_energy_efficiency"
+-- "2024",6,83,211
+-- "2023",1,83,164
+-- "2022",1,83,164
+-- "2021",1,83,991
+-- "2020",1,83,135
+-- "2019",1,84,220
+-- "2018",15,84,122
+-- "2017",39,84,108
+-- "2016",23,84,115
+-- "2015",43,83,104
+-- "2014",52,84,111
 
 
 -----------------------------------------
 -- How much money must be spent to move 
 -- above the F Ratting (E is the minimum 
--- allowed by law to rent a home) 
------------------------------------------
-
-SELECT '-- ' AS com
-     , c.CURRENT_ENERGY_RATING
+-- allowed by law to rent a home privatly) 
+--------
+SELECT c.CURRENT_ENERGY_RATING
      , c.POTENTIAL_ENERGY_RATING 
-     , SUM(r.MIN_SPEND) AS total_min_spend
-     , SUM(r.MAX_SPEND) AS total_max_spend
+ --    , min(r.MIN_SPEND) AS min_spend REMOVED AS FOR MOST CASES THIS IS 0. Another case of bad data quality ?
+     , max(r.MAX_SPEND) AS max_spend
      , (SUM(r.MIN_SPEND) / count(c.LMK_KEY))::INT AS average_min_sped_per_home
+     , count(c.*) AS number_of_homes
 FROM certificates c
-INNER JOIN recommendations r ON c.LMK_KEY = r.LMK_KEY
-WHERE c.CURRENT_ENERGY_RATING > 'E' 
-  AND c.CURRENT_ENERGY_RATING <> 'INVALID!'
-  AND c.POTENTIAL_ENERGY_RATING < c.CURRENT_ENERGY_RATING
-GROUP BY 1,2,3
-ORDER BY 6 DESC;
+LEFT JOIN recommendations r ON c.LMK_KEY = r.LMK_KEY
+WHERE c.CURRENT_ENERGY_RATING IN ('F', 'G') 
+  AND c.POTENTIAL_ENERGY_RATING IN ('A', 'B', 'C', 'D', 'E')
+  AND c.tenure_agg = 'rental (private)'
+GROUP BY 1,2
+ORDER BY 4 DESC;
 -- On average, the maximum that a home should need to improve (from F to A), would be £3,609, 
 -- but there is a "spend cap" (of £3,500) for reaching the minimum allowed by law (Rating E)
 -- A landlord spending £3,500 can apply for an exception, even if not able to reach the rating E
--- 	F	A	612785835	1092723850	3609
--- 	G	A	196452450	356094860	3522
--- 	G	B	549157860	1045951270	2672
--- 	G	C	568848769	1090930029	2567
--- 	F	B	1969574380	3630856310	2516
--- 	G	D	350065255	668020250	2459
--- 	F	C	2480033188	4625975778	2282
--- 	G	E	175939920	338002570	1954
--- 	F	D	985474356	1840123716	1828
--- 	G	F	98394022	192204592	1037
--- 	F	E	376523996	735581946	951
+-- It is also worth noticing that there are 85,354 homes that could improve from F to C at an average cost of £2161
+-- "CURRENT_ENERGY_RATING","POTENTIAL_ENERGY_RATING","max_spend","average_min_sped_per_home","number_of_homes"
+-- F,A,25000,3668,26771
+-- G,A,25000,3562,9819
+-- G,B,25000,2917,17268
+-- F,B,25000,2675,58045
+-- G,C,25000,2498,23396
+-- G,D,25000,2252,16955
+-- F,C,25000,2161,85364
+-- G,E,25000,1519,11994
+-- F,D,25000,1362,55046
+-- F,E,25000,663,57945
 
--- Homes that only have recommendations to move up to the energy rating of F (bellow the minimum allowed by law to be able to rent a home)
+
+-----------------------------------------
+-- Total spend in England and Wales to get 
+-- above the F Ratting (E is the minimum 
+-- allowed by law to rent a home privatly) 
+-----------------------------------------
+SELECT SUM(r.MIN_SPEND) AS total_min_spend 
+     , SUM(r.MAX_SPEND) AS total_max_spend
+FROM certificates c
+LEFT JOIN recommendations r ON c.LMK_KEY = r.LMK_KEY
+WHERE c.CURRENT_ENERGY_RATING in ('F', 'G') 
+--  AND c.CURRENT_ENERGY_RATING <> 'INVALID!'
+  AND c.POTENTIAL_ENERGY_RATING in ('A', 'B', 'C', 'D', 'E')
+  AND c.tenure_agg = 'rental (private)'
+;
+-- Getting all privatly rented homes to at least the E rating would cost in total between £751,483,481 and $1,455,312,401
+
+
+-----------------------------------------
+-- Total spend in England and Wales to get 
+-- above the F Ratting (E is the minimum 
+-- allowed by law to rent a home privatly),
+-- by spending no more than £3500.  
+-----------------------------------------
+WITH only_one_recomendation AS (
+ SELECT c.LMK_KEY
+      , count(r.*) AS total
+FROM certificates c
+LEFT JOIN recommendations r ON c.LMK_KEY = r.LMK_KEY
+GROUP BY 1 
+HAVING count(r.*) = 1      
+)
+SELECT MIN(r.MIN_SPEND) AS min_spend 
+     , MAX(r.MAX_SPEND) AS max_spend
+     , count(DISTINCT c.LMK_KEY) AS number_of_homes 
+FROM certificates c
+-- INNER JOIN only_one_recomendation one ON one.LMK_KEY = c.LMK_KEY 
+LEFT JOIN recommendations r ON c.LMK_KEY = r.LMK_KEY
+WHERE c.CURRENT_ENERGY_RATING in ('F', 'G') 
+  AND r.max_spend < 3500
+  AND r.MIN_SPEND > 0 -- TO remove possible glitches in the data
+  AND c.POTENTIAL_ENERGY_RATING in ('A', 'B', 'C', 'D', 'E')
+  AND c.tenure_agg = 'rental (private)'
+;
+-- There are 41,444 homes in England/Wales that are being rented in the private sector, 
+-- where the landlord would need to spend less than £3,500 to upgrade it to the minimum required by law.
+-- "min_spend","max_spend","number_of_homes"
+-- 5,3200,41444
+-- There are 159 homes that would only need to make 1 recommended change. (commented INNER JOIN)
+-- I have not included the query here, but there are 4 homes where the landlord would need to spend £30 to be within the Law.
+-- "min_spend","max_spend","number_of_homes"
+-- 15,3000,159
+
+
+-- This is a collection of inconsistencies in the dataset. We have possible:
+--  - Input errors
+--  - Recommendations for improvements to the same rating
+--  - Recommendations for improvements to the rating F (for properties that are being rented) when the minimum by law is the rating E
 SELECT c.TENURE_AGG 
      , c.CURRENT_ENERGY_RATING
      , c.POTENTIAL_ENERGY_RATING 
-     , count(c.LMK_KEY) AS total_number_home
+     , count(DISTINCT c.LMK_KEY) AS total_number_of_homes
+     , avg(r.MIN_SPEND)::INT average_min_spend
+     , CASE WHEN c.CURRENT_ENERGY_RATING < c.POTENTIAL_ENERGY_RATING THEN 'Input error ?'
+          WHEN c.CURRENT_ENERGY_RATING = c.POTENTIAL_ENERGY_RATING THEN 'Improvement to the same rating ?'
+          ELSE 'Improvement to bellow the Rating E' END AS possible_data_error
 FROM certificates c
-INNER JOIN recommendations r ON c.LMK_KEY = r.LMK_KEY
+LEFT JOIN recommendations r ON c.LMK_KEY = r.LMK_KEY
 WHERE POTENTIAL_ENERGY_RATING > 'E'
   AND CURRENT_ENERGY_RATING <> 'INVALID!'
   AND POTENTIAL_ENERGY_RATING <> 'INVALID!'
   AND tenure_agg = 'rental (private)'
 GROUP BY 1,2,3;
 -- There is a significant ammount of homes that have a low EPC rating and no recommendation is made to achieve (at least) E
--- rental (private)	E	F	3        <- Input error ?
--- rental (private)	F	F	23085
--- rental (private)	G	F	14855
--- rental (private)	G	G	8166
+-- "tenure_agg","CURRENT_ENERGY_RATING","POTENTIAL_ENERGY_RATING","total_number_of_homes","average_min_spend","possible_data_error"
+-- rental (private),E,F,1,1608,Input error ?
+-- rental (private),G,F,3126,695,Improvement to bellow the Rating E
+-- rental (private),F,F,5343,663,Improvement to the same rating ?
+-- rental (private),G,G,2080,663,Improvement to the same rating ?
 
 
--- Total number of homes (private or social) being rented with an EPC bellow E
+
+-- Total number of homes  being rented (private) with an EPC bellow E
+SELECT c.TENURE_AGG 
+     , count(c.LMK_KEY) AS total_number_home
+FROM certificates c
+WHERE CURRENT_ENERGY_RATING in ('F', 'G') -- Current EPC rating is either F or G
+  AND tenure_agg = 'rental (private)' -- Home is being rented private
+GROUP BY 1;
+-- These home might be being rented illegally or not. No way to tell from the dataset alone as 
+-- the information about exceptions seems to be missing
+-- rental (private)	66,363
+
+
+-- Total number of homes (private or social) being rented with an EPC bellow E and no recommendation to go to E or above
 SELECT c.TENURE_AGG 
      , count(c.LMK_KEY) AS total_number_home
 FROM certificates c
@@ -242,9 +188,8 @@ WHERE POTENTIAL_ENERGY_RATING in ('F', 'G')
   AND CURRENT_ENERGY_RATING in ('F', 'G') -- Current EPC rating is either F or G
   AND CURRENT_ENERGY_RATING <> 'INVALID!'
   AND POTENTIAL_ENERGY_RATING <> 'INVALID!'
-  AND tenure_agg like 'rental%' -- Home is being rented
+  AND tenure_agg = 'rental (private)' -- Private rent
 GROUP BY 1;
 -- These homes are not only being rented illegally, but also don't seem to have a recommendation to improve to the
 -- minimum required by law (EPC rating E).
 -- rental (private)	10549
--- rental (social)	2973
