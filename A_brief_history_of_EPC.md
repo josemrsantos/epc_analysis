@@ -57,6 +57,8 @@ Not everything is a blackhole on the available data though ;) so I was able to e
 There are **41,444** homes in England/Wales that are **being rented in the private sector**,   
 where the **landlord would need to spend less than £3,500** to upgrade it to the minimum required by law.
 
+If the landlords of the 41,444 properties above would receive the maximum fine (£5,000), the state (or local authorities) could **not only set an example, but also collect**  **£207,220,000**.
+
 Out of the 41,444 homes listed above, there are **159** homes that **would only need to make 1 recommended change** and out of those, **4 landlords would only need to spend £30** to make it to the required by law.
 
 Getting **all privately rented homes to at least the E rating** would cost in total between **£751,483,481** and **£1,455,312,401**
